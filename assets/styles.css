@@ -35,7 +35,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 90vh;
+    min-height: 90vh;
 }
 
 #header {
@@ -99,6 +99,7 @@ body {
     background: #121212;
     font-size: 32px;
     text-align: center;
+    
 }
 
 #about p {
