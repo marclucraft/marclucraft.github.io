@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — UnoSignal Skate Store</title>
+
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script src="js/onesignal.js" defer></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="announcement">Free shipping on orders over <strong>£49.99</strong> — UK and EU</div>
+
+  <header class="site-header">
+    <div class="container">
+      <button class="nav-toggle" aria-label="Open menu">☰</button>
+      <a class="brand" href="index.html">
+        <span class="brand-mark"><span>UNO</span></span>SIGNAL
+      </a>
+      <nav class="main-nav">
+        <a href="shop.html">Skate</a>
+        <a href="shop.html">Clothing</a>
+        <a href="shop.html">Sale</a>
+        <a href="about.html">About</a>
+      </nav>
+      <div class="header-actions">
+        <a href="account.html" data-auth-link><span data-auth-name>Sign in</span></a>
+        <a class="cart-link" href="cart.html">
+          Cart <span class="cart-count" data-cart-count>0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section class="about-hero">
+    <div class="container">
+      <h1>Built by skaters,<br />for skaters.</h1>
+    </div>
+  </section>
+
+  <article class="about-content">
+    <p>
+      UnoSignal is a fictional skate brand built as a demo site for OneSignal.
+      Every product, model and athlete you see here is made up. The site is
+      designed to show how a real ecommerce store would integrate with the
+      OneSignal Web SDK to identify users, apply tags, and track custom events.
+    </p>
+
+    <h2>What this demo shows</h2>
+    <p>
+      Sign in on the account page to see how a user is identified with an
+      External ID and their email subscription is created. Browse the shop and
+      add items to your cart to see where Custom Events like
+      <em>add_to_cart</em>, <em>checkout_started</em> and
+      <em>purchase_completed</em> would fire. Tags such as
+      <em>cart_value</em>, <em>last_viewed_category</em> and
+      <em>account_status</em> are updated alongside those events so the
+      visitor can be segmented in the OneSignal dashboard.
+    </p>
+
+    <h2>How it's wired up</h2>
+    <p>
+      The OneSignal Web SDK is loaded in the head of every page, and the init
+      call lives in <code>js/onesignal.js</code>. The hook points in
+      <code>js/auth.js</code>, <code>js/cart.js</code> and
+      <code>js/main.js</code> show where the identity and event calls belong.
+      Replace <code>YOUR_ONESIGNAL_APP_ID</code> in the init file with the App
+      ID from your OneSignal dashboard to bring it to life.
+    </p>
+  </article>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <span>© 2026 UnoSignal Skate Co. Demo site.</span>
+        <span>Powered by OneSignal</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
