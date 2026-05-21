@@ -74,7 +74,6 @@ window.signIn = function (form) {
   // and create an email subscription.
   // -----------------------------------------------------------------
   withOneSignal(async function (OneSignal) {
-    await OneSignal.login(externalId);
     OneSignal.User.addEmail(email);
 
     // Apply onboarding tags so segmentation works straight away.
@@ -83,6 +82,8 @@ window.signIn = function (form) {
       signup_source: "web_demo",
       first_name: name,
     });
+
+    await OneSignal.login(externalId);
   });
 
   window.location.href = "index.html";
@@ -91,7 +92,7 @@ window.signIn = function (form) {
 
 window.signOut = function () {
   const session = readSession();
-  const email = session?.email;
+  const externalId = session?.externalId || "unknown";
 
   writeSession(null);
 
@@ -103,7 +104,7 @@ window.signOut = function () {
     // Apply account_status tag. add tag for who they were (just to find them later)
     OneSignal.User.addTags({
       account_status: "signed_out",
-      who_this: email,
+      who_this: externalId,
     });
 
     await OneSignal.logout();
