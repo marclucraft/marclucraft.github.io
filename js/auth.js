@@ -102,13 +102,13 @@ window.signOut = function () {
   // -----------------------------------------------------------------
 
   withOneSignal(async function (OneSignal) {
-    // Apply account_status tag. add tag for who they were (just to find them later)
-    OneSignal.User.addTags({
-      account_status: "signed_out",
-      who_this: externalId,
-    });
+    // Apply account_status tag.
+    OneSignal.User.addTag("account_status", "signed_out");
 
     await OneSignal.logout();
+
+    // add tag to anonymous push subscription (just to find them later)
+    OneSignal.User.addTag("signed_out_user", externalId);
 
     window.location.href = "index.html";
   });
