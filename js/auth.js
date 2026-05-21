@@ -38,7 +38,10 @@ function updateAuthUI() {
   document.querySelectorAll("[data-auth-link]").forEach(function (el) {
     el.setAttribute("href", session ? "#" : "account.html");
     el.onclick = session
-      ? function (e) { e.preventDefault(); window.signOut(); }
+      ? function (e) {
+          e.preventDefault();
+          window.signOut();
+        }
       : null;
   });
 
@@ -49,7 +52,8 @@ function updateAuthUI() {
       signedInPanel.style.display = "block";
       signedOutPanel.style.display = "none";
       document.getElementById("session-email").textContent = session.email;
-      document.getElementById("session-external-id").textContent = session.externalId;
+      document.getElementById("session-external-id").textContent =
+        session.externalId;
     } else {
       signedInPanel.style.display = "none";
       signedOutPanel.style.display = "block";
@@ -66,37 +70,44 @@ window.signIn = function (form) {
   writeSession({ email: email, name: name, externalId: externalId });
 
   // -----------------------------------------------------------------
-  // OneSignal hook: identify the user with their stable External ID
+  // OneSignal: identify the user with their stable External ID
   // and create an email subscription.
-  //
-  // withOneSignal(async function (OneSignal) {
-  //   await OneSignal.login(externalId);
-  //   OneSignal.User.addEmail(email);
-  //
-  //   // Apply onboarding tags so segmentation works straight away.
-  //   OneSignal.User.addTags({
-  //     account_status: "signed_in",
-  //     signup_source: "web_demo",
-  //     first_name: name,
-  //   });
-  // });
   // -----------------------------------------------------------------
+  withOneSignal(async function (OneSignal) {
+    await OneSignal.login(externalId);
+    OneSignal.User.addEmail(email);
+
+    // Apply onboarding tags so segmentation works straight away.
+    OneSignal.User.addTags({
+      account_status: "signed_in",
+      signup_source: "web_demo",
+      first_name: name,
+    });
+  });
 
   window.location.href = "index.html";
   return false;
 };
 
 window.signOut = function () {
+  const session = readSession();
+  const email = session?.email;
+
   writeSession(null);
 
   // -----------------------------------------------------------------
-  // OneSignal hook: clear identity on the device.
-  //
-  // withOneSignal(async function (OneSignal) {
-  //   OneSignal.User.addTag("account_status", "signed_out");
-  //   await OneSignal.logout();
-  // });
+  // OneSignal: remove external ID and set tags.
   // -----------------------------------------------------------------
+
+  withOneSignal(async function (OneSignal) {
+    // Apply account_status tag. add tag for who they were (just to find them later)
+    OneSignal.User.addTags({
+      account_status: "signed_out",
+      who_this: email,
+    });
+
+    await OneSignal.logout();
+  });
 
   window.location.href = "index.html";
 };

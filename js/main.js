@@ -8,19 +8,37 @@
 
 function productCard(p) {
   return (
-    "<article class=\"product-card\" data-id=\"" + p.id + "\" data-category=\"" + p.category + "\">" +
-      (p.tag ? "<span class=\"product-tag\">" + p.tag + "</span>" : "") +
-      "<a href=\"#\" class=\"product-image\" onclick=\"return viewProduct('" + p.id + "')\">" +
-        "<img src=\"" + p.image + "\" alt=\"" + p.name + "\" loading=\"lazy\">" +
-      "</a>" +
-      "<div class=\"product-body\">" +
-        "<h3>" + p.name + "</h3>" +
-        "<p class=\"muted\">" + p.description + "</p>" +
-        "<div class=\"product-footer\">" +
-          "<span class=\"price\">£" + p.price.toFixed(2) + "</span>" +
-          "<button class=\"btn btn-primary\" onclick=\"addToCart('" + p.id + "')\">Add to cart</button>" +
-        "</div>" +
-      "</div>" +
+    '<article class="product-card" data-id="' +
+    p.id +
+    '" data-category="' +
+    p.category +
+    '">' +
+    (p.tag ? '<span class="product-tag">' + p.tag + "</span>" : "") +
+    '<a href="#" class="product-image" onclick="return viewProduct(\'' +
+    p.id +
+    "')\">" +
+    '<img src="' +
+    p.image +
+    '" alt="' +
+    p.name +
+    '" loading="lazy">' +
+    "</a>" +
+    '<div class="product-body">' +
+    "<h3>" +
+    p.name +
+    "</h3>" +
+    '<p class="muted">' +
+    p.description +
+    "</p>" +
+    '<div class="product-footer">' +
+    '<span class="price">£' +
+    p.price.toFixed(2) +
+    "</span>" +
+    '<button class="btn btn-primary" onclick="addToCart(\'' +
+    p.id +
+    "')\">Add to cart</button>" +
+    "</div>" +
+    "</div>" +
     "</article>"
   );
 }
@@ -28,22 +46,6 @@ function productCard(p) {
 window.viewProduct = function (productId) {
   const product = window.findProduct(productId);
   if (!product) return false;
-
-  // -----------------------------------------------------------------
-  // OneSignal hook: Custom Event for product views.
-  //
-  // withOneSignal(function (OneSignal) {
-  //   OneSignal.User.trackEvent("view_product", {
-  //     product_id: product.id,
-  //     product_name: product.name,
-  //     category: product.category,
-  //     price: product.price,
-  //   });
-  //   OneSignal.User.addTag("last_viewed_category", product.category);
-  // });
-  // -----------------------------------------------------------------
-
-  // No product detail page in this demo: just add to cart from main grid.
   return false;
 };
 
@@ -59,7 +61,9 @@ function renderHome() {
   const featured = window.PRODUCTS.slice(0, 4);
   renderGrid("featured-grid", featured);
 
-  const newIn = window.PRODUCTS.filter(function (p) { return p.tag === "New"; });
+  const newIn = window.PRODUCTS.filter(function (p) {
+    return p.tag === "New";
+  });
   renderGrid("new-grid", newIn.length ? newIn : window.PRODUCTS.slice(4, 8));
 }
 
@@ -68,19 +72,22 @@ function renderShop() {
   if (!grid) return;
 
   function applyFilter(category) {
-    const items = category === "all"
-      ? window.PRODUCTS
-      : window.PRODUCTS.filter(function (p) { return p.category === category; });
+    const items =
+      category === "all"
+        ? window.PRODUCTS
+        : window.PRODUCTS.filter(function (p) {
+            return p.category === category;
+          });
     renderGrid("shop-grid", items);
 
     // -------------------------------------------------------------
-    // OneSignal hook: tag the user with the category they're browsing
+    // OneSignal: tag the user with the category they're browsing
     // so we can segment them later.
-    //
-    // withOneSignal(function (OneSignal) {
-    //   OneSignal.User.addTag("browsing_category", category);
-    // });
     // -------------------------------------------------------------
+
+    withOneSignal(function (OneSignal) {
+      OneSignal.User.addTag("browsing_category", category);
+    });
   }
 
   applyFilter("all");
@@ -115,20 +122,21 @@ function setupNewsletter() {
     if (!email) return;
 
     // -------------------------------------------------------------
-    // OneSignal hook: subscribe the visitor's email without
+    // OneSignal: subscribe the visitor's email without
     // necessarily logging them in. Useful for newsletter signups.
-    //
-    // withOneSignal(function (OneSignal) {
-    //   OneSignal.User.addEmail(email);
-    //   OneSignal.User.addTags({
-    //     signup_source: "footer_newsletter",
-    //     newsletter_subscriber: "true",
-    //   });
-    //   OneSignal.User.trackEvent("newsletter_signup", { email: email });
-    // });
+    // add tags for segmentation, and track a custom event for journeys.
     // -------------------------------------------------------------
 
-    form.innerHTML = "<p class=\"muted\">Thanks! You're on the list.</p>";
+    withOneSignal(function (OneSignal) {
+      OneSignal.User.addEmail(email);
+      OneSignal.User.addTags({
+        signup_source: "footer_newsletter",
+        newsletter_subscriber: "true",
+      });
+      OneSignal.User.trackEvent("newsletter_signup", { email: email });
+    });
+
+    form.innerHTML = '<p class="muted">Thanks! You\'re on the list.</p>';
   });
 }
 

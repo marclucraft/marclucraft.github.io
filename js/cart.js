@@ -4,13 +4,6 @@
  * The cart lives in localStorage under "unosignal_cart" so it persists
  * between page loads. This file also has the hook points where the
  * OneSignal Custom Event and Tag calls should live.
- *
- * Suggested OneSignal events to fire from here:
- *   add_to_cart, remove_from_cart, view_cart, checkout_started,
- *   purchase_completed
- *
- * Suggested Tags to set/update from here:
- *   cart_value, cart_item_count, last_category_added
  * ===================================================================== */
 
 const CART_KEY = "unosignal_cart";
@@ -31,7 +24,9 @@ function writeCart(cart) {
 
 function updateCartBadge() {
   const cart = readCart();
-  const count = cart.reduce(function (n, item) { return n + item.qty; }, 0);
+  const count = cart.reduce(function (n, item) {
+    return n + item.qty;
+  }, 0);
   document.querySelectorAll("[data-cart-count]").forEach(function (el) {
     el.textContent = count;
     el.style.display = count > 0 ? "inline-flex" : "none";
@@ -49,7 +44,9 @@ window.addToCart = function (productId) {
   if (!product) return;
 
   const cart = readCart();
-  const existing = cart.find(function (i) { return i.id === productId; });
+  const existing = cart.find(function (i) {
+    return i.id === productId;
+  });
   if (existing) {
     existing.qty += 1;
   } else {
@@ -68,48 +65,60 @@ window.addToCart = function (productId) {
   // OneSignal hook: Custom Event for add_to_cart.
   // Fire when a user adds a product, so it can power journeys
   // (abandoned cart, cross-sell, etc.).
-  //
-  // withOneSignal(function (OneSignal) {
-  //   OneSignal.User.trackEvent("add_to_cart", {
-  //     product_id: product.id,
-  //     product_name: product.name,
-  //     category: product.category,
-  //     price: product.price,
-  //   });
-  //
-  //   // Update tags so the user can be put into segments based
-  //   // on cart state.
-  //   OneSignal.User.addTags({
-  //     cart_item_count: String(cart.reduce(function (n, i) { return n + i.qty; }, 0)),
-  //     cart_value: cartTotal(cart).toFixed(2),
-  //     last_category_added: product.category,
-  //   });
-  // });
   // -----------------------------------------------------------------
+
+  withOneSignal(function (OneSignal) {
+    OneSignal.User.trackEvent("add_to_cart", {
+      product_id: product.id,
+      product_name: product.name,
+      category: product.category,
+      price: product.price,
+    });
+
+    // Update tags so the user can be put into segments based
+    // on cart state.
+    OneSignal.User.addTags({
+      cart_item_count: String(
+        cart.reduce(function (n, i) {
+          return n + i.qty;
+        }, 0),
+      ),
+      cart_value: cartTotal(cart).toFixed(2),
+      last_category_added: product.category,
+    });
+  });
 
   flashToast(product.name + " added to cart");
 };
 
 window.removeFromCart = function (productId) {
-  const cart = readCart().filter(function (i) { return i.id !== productId; });
+  const cart = readCart().filter(function (i) {
+    return i.id !== productId;
+  });
   writeCart(cart);
 
   // -----------------------------------------------------------------
-  // OneSignal hook: Custom Event for remove_from_cart.
-  //
-  // withOneSignal(function (OneSignal) {
-  //   OneSignal.User.trackEvent("remove_from_cart", { product_id: productId });
-  //   OneSignal.User.addTags({
-  //     cart_item_count: String(cart.reduce(function (n, i) { return n + i.qty; }, 0)),
-  //     cart_value: cartTotal(cart).toFixed(2),
-  //   });
-  // });
+  // OneSignal: Custom Event for remove_from_cart.
   // -----------------------------------------------------------------
+
+  withOneSignal(function (OneSignal) {
+    OneSignal.User.trackEvent("remove_from_cart", { product_id: productId });
+    OneSignal.User.addTags({
+      cart_item_count: String(
+        cart.reduce(function (n, i) {
+          return n + i.qty;
+        }, 0),
+      ),
+      cart_value: cartTotal(cart).toFixed(2),
+    });
+  });
 };
 
 window.changeQty = function (productId, delta) {
   const cart = readCart();
-  const item = cart.find(function (i) { return i.id === productId; });
+  const item = cart.find(function (i) {
+    return i.id === productId;
+  });
   if (!item) return;
   item.qty += delta;
   if (item.qty <= 0) {
@@ -125,45 +134,70 @@ window.renderCartPage = function () {
   if (!container) return;
 
   if (cart.length === 0) {
-    container.innerHTML = "<p class=\"cart-empty\">Your cart is empty. <a href=\"shop.html\">Keep shopping</a>.</p>";
+    container.innerHTML =
+      '<p class="cart-empty">Your cart is empty. <a href="shop.html">Keep shopping</a>.</p>';
     if (totalEl) totalEl.textContent = "£0.00";
     return;
   }
 
-  container.innerHTML = cart.map(function (item) {
-    return (
-      "<div class=\"cart-row\" data-id=\"" + item.id + "\">" +
-        "<img src=\"" + item.image + "\" alt=\"" + item.name + "\">" +
-        "<div class=\"cart-row-info\">" +
-          "<h3>" + item.name + "</h3>" +
-          "<p class=\"muted\">" + item.category + "</p>" +
-          "<div class=\"qty-controls\">" +
-            "<button onclick=\"changeQty('" + item.id + "', -1)\">−</button>" +
-            "<span>" + item.qty + "</span>" +
-            "<button onclick=\"changeQty('" + item.id + "', 1)\">+</button>" +
-          "</div>" +
+  container.innerHTML = cart
+    .map(function (item) {
+      return (
+        '<div class="cart-row" data-id="' +
+        item.id +
+        '">' +
+        '<img src="' +
+        item.image +
+        '" alt="' +
+        item.name +
+        '">' +
+        '<div class="cart-row-info">' +
+        "<h3>" +
+        item.name +
+        "</h3>" +
+        '<p class="muted">' +
+        item.category +
+        "</p>" +
+        '<div class="qty-controls">' +
+        "<button onclick=\"changeQty('" +
+        item.id +
+        "', -1)\">−</button>" +
+        "<span>" +
+        item.qty +
+        "</span>" +
+        "<button onclick=\"changeQty('" +
+        item.id +
+        "', 1)\">+</button>" +
         "</div>" +
-        "<div class=\"cart-row-price\">" +
-          "<strong>£" + (item.qty * item.price).toFixed(2) + "</strong>" +
-          "<button class=\"link-btn\" onclick=\"removeFromCart('" + item.id + "')\">Remove</button>" +
         "</div>" +
-      "</div>"
-    );
-  }).join("");
+        '<div class="cart-row-price">' +
+        "<strong>£" +
+        (item.qty * item.price).toFixed(2) +
+        "</strong>" +
+        '<button class="link-btn" onclick="removeFromCart(\'' +
+        item.id +
+        "')\">Remove</button>" +
+        "</div>" +
+        "</div>"
+      );
+    })
+    .join("");
 
   if (totalEl) totalEl.textContent = "£" + cartTotal(cart).toFixed(2);
 
   // -----------------------------------------------------------------
-  // OneSignal hook: Custom Event for view_cart.
+  // OneSignal: Custom Event for view_cart.
   // Useful for abandoned cart journeys.
-  //
-  // withOneSignal(function (OneSignal) {
-  //   OneSignal.User.trackEvent("view_cart", {
-  //     item_count: cart.reduce(function (n, i) { return n + i.qty; }, 0),
-  //     cart_value: cartTotal(cart),
-  //   });
-  // });
   // -----------------------------------------------------------------
+
+  withOneSignal(function (OneSignal) {
+    OneSignal.User.trackEvent("view_cart", {
+      item_count: cart.reduce(function (n, i) {
+        return n + i.qty;
+      }, 0),
+      cart_value: cartTotal(cart),
+    });
+  });
 };
 
 window.checkout = function () {
@@ -173,37 +207,42 @@ window.checkout = function () {
   }
 
   // -----------------------------------------------------------------
-  // OneSignal hook: Custom Event for checkout_started, then for the
+  // OneSignal: Custom Event for checkout_started, then for the
   // simulated purchase_completed event. In a real store, fire
   // purchase_completed only after the payment processor confirms.
-  //
-  // withOneSignal(function (OneSignal) {
-  //   OneSignal.User.trackEvent("checkout_started", {
-  //     item_count: cart.reduce(function (n, i) { return n + i.qty; }, 0),
-  //     cart_value: cartTotal(cart),
-  //   });
-  // });
-  //
-  // // ...after successful charge:
-  // withOneSignal(function (OneSignal) {
-  //   OneSignal.User.trackEvent("purchase_completed", {
-  //     order_id: "demo-" + Date.now(),
-  //     total: cartTotal(cart),
-  //     item_count: cart.reduce(function (n, i) { return n + i.qty; }, 0),
-  //   });
-  //
-  //   // Clear cart-state tags now the order is placed.
-  //   OneSignal.User.addTags({
-  //     cart_item_count: "0",
-  //     cart_value: "0",
-  //     last_purchase_value: cartTotal(cart).toFixed(2),
-  //   });
-  // });
   // -----------------------------------------------------------------
+  withOneSignal(function (OneSignal) {
+    OneSignal.User.trackEvent("checkout_started", {
+      item_count: cart.reduce(function (n, i) {
+        return n + i.qty;
+      }, 0),
+      cart_value: cartTotal(cart),
+    });
+  });
+
+  // ...after successful charge:
+  withOneSignal(function (OneSignal) {
+    OneSignal.User.trackEvent("purchase_completed", {
+      order_id: "demo-" + Date.now(),
+      total: cartTotal(cart),
+      item_count: cart.reduce(function (n, i) {
+        return n + i.qty;
+      }, 0),
+    });
+
+    // Clear cart-state tags now the order is placed.
+    OneSignal.User.addTags({
+      cart_item_count: "0",
+      cart_value: "0",
+      last_purchase_value: cartTotal(cart).toFixed(2),
+    });
+  });
 
   flashToast("Order placed! Demo only, no payment was taken.");
   writeCart([]);
-  setTimeout(function () { window.location.href = "index.html"; }, 1200);
+  setTimeout(function () {
+    window.location.href = "index.html";
+  }, 1200);
 };
 
 function flashToast(msg) {

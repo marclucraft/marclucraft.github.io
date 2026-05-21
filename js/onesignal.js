@@ -1,9 +1,6 @@
 /* =====================================================================
  * UnoSignal Skate Store — OneSignal Web SDK initialization
  * ---------------------------------------------------------------------
- * This file is a placeholder for the OneSignal Web SDK setup.
- * Replace YOUR_ONESIGNAL_APP_ID with the App ID from the dashboard.
- *
  * Docs:
  *   Web SDK setup:  https://documentation.onesignal.com/docs/web-push-quickstart
  *   API reference:  https://documentation.onesignal.com/docs/web-sdk
@@ -13,17 +10,8 @@ window.OneSignalDeferred = window.OneSignalDeferred || [];
 
 OneSignalDeferred.push(async function (OneSignal) {
   await OneSignal.init({
-    appId: "YOUR_ONESIGNAL_APP_ID",
-    safari_web_id: "YOUR_SAFARI_WEB_ID", // optional
-    notifyButton: { enable: true },
-    allowLocalhostAsSecureOrigin: true,
+    appId: "03a500f9-c19c-4782-b9f4-e5f7becf201d",
   });
-
-  // Example: request push permission on first load.
-  // OneSignal.Notifications.requestPermission();
-
-  // Tag every visitor with a default segment-friendly tag.
-  // OneSignal.User.addTag("site_section", "home");
 
   // Make the SDK accessible to the rest of our scripts.
   window.OneSignalReady = true;
