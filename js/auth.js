@@ -74,6 +74,8 @@ window.signIn = function (form) {
   // and create an email subscription.
   // -----------------------------------------------------------------
   withOneSignal(async function (OneSignal) {
+    await OneSignal.login(externalId);
+
     OneSignal.User.addEmail(email);
 
     // Apply onboarding tags so segmentation works straight away.
@@ -83,10 +85,9 @@ window.signIn = function (form) {
       first_name: name,
     });
 
-    await OneSignal.login(externalId);
+    window.location.href = "index.html";
   });
 
-  window.location.href = "index.html";
   return false;
 };
 
@@ -108,9 +109,9 @@ window.signOut = function () {
     });
 
     await OneSignal.logout();
-  });
 
-  window.location.href = "index.html";
+    window.location.href = "index.html";
+  });
 };
 
 document.addEventListener("DOMContentLoaded", updateAuthUI);
