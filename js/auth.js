@@ -78,7 +78,9 @@ window.signIn = function (form) {
 
     OneSignal.User.addEmail(email);
 
-    // Apply onboarding tags so segmentation works straight away.
+    OneSignal.User.removeTag("signed_out_user"); // remove the signed_out_user tag if it exists
+
+    // Apply tags for segmentation.
     OneSignal.User.addTags({
       account_status: "signed_in",
       signup_source: "web_demo",
