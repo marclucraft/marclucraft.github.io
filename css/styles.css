@@ -5,14 +5,14 @@
  * ===================================================================== */
 
 :root {
-  --ink: #111111;
+  --ink: #020101;
   --paper: #ffffff;
   --paper-soft: #f6f5f1;
   --muted: #6b6b6b;
-  --line: #e6e6e1;
-  --accent: #e63946; /* skate red */
-  --accent-dark: #b62b37;
-  --yellow: #ffd400;
+  --line: #eeeeee;
+  --accent: #f30f1a;
+  --accent-dark: color-mix(in oklch, var(--accent), black 20%);
+  --yellow: #fee419;
 }
 
 * {
@@ -130,11 +130,12 @@ img {
   z-index: 50;
 }
 .site-header .container {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: 32px;
-  padding-top: 16px;
-  padding-bottom: 16px;
+  gap: 16px;
+  padding-top: 6px;
+  padding-bottom: 6px;
 }
 .brand {
   font-family: "Bebas Neue", "Impact", sans-serif;
@@ -158,14 +159,38 @@ img {
   transform: skewX(8deg);
 }
 
+/* ---- Logo breakout (header only) ---- */
+/* Logo bleeds upward into the announcement bar and downward  */
+/* below the header border — floating in the Santa Cruz style. */
+.brand.brand-img {
+  display: block;
+  line-height: 0;
+  position: relative;
+  z-index: 51; /* sits above header (z-index: 50) */
+  margin-top: -14px; /* bleed upward into announcement bar */
+}
+.brand-logo {
+  display: block;
+  height: auto;
+  width: 140px;
+  margin-bottom: -22px; /* bleed downward below the border-bottom */
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease;
+}
+.brand-logo:hover {
+  transform: translateY(-2px) scale(1.04);
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.1));
+}
+
 .main-nav {
   display: flex;
-  gap: 28px;
-  flex: 1;
+  gap: 36px;
   font-weight: 600;
   font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+  justify-content: center; /* centres links within the middle grid cell */
 }
 .main-nav a:hover {
   color: var(--accent);
@@ -173,6 +198,7 @@ img {
 
 .header-actions {
   display: flex;
+  justify-self: end; /* push to far right of the 3rd grid column */
   align-items: center;
   gap: 18px;
   font-size: 0.9rem;
@@ -223,7 +249,7 @@ img {
   pointer-events: none;
   background-image:
     linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)),
-    url("../images/photo-1566677785383-e2c740347c7b.avif");
+    url("../images/hero.avif");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

@@ -12,7 +12,7 @@ window.PRODUCTS = [
     category: "decks",
     price: 79.99,
     image: "https://picsum.photos/seed/signalwave/600/600",
-    description: "8.25\" classic shape with a screaming hand graphic.",
+    description: '8.25" classic shape with a screaming hand graphic.',
     tag: "New",
   },
   {
@@ -21,7 +21,7 @@ window.PRODUCTS = [
     category: "decks",
     price: 74.99,
     image: "https://picsum.photos/seed/pushclassic/600/600",
-    description: "8.0\" popsicle, perfect for street and park.",
+    description: '8.0" popsicle, perfect for street and park.',
     tag: null,
   },
   {
@@ -46,7 +46,7 @@ window.PRODUCTS = [
     id: "tee-screaming-bell",
     name: "Screaming Bell Tee",
     category: "clothing",
-    price: 32.00,
+    price: 32.0,
     image: "https://picsum.photos/seed/screamingbell/600/600",
     description: "Heavyweight cotton tee, screen-printed in the UK.",
     tag: null,
@@ -55,25 +55,25 @@ window.PRODUCTS = [
     id: "hoodie-segment",
     name: "Segment Hoodie",
     category: "clothing",
-    price: 64.00,
-    image: "https://picsum.photos/seed/segment/600/600",
+    price: 64.0,
+    image: "images/hoody.png",
     description: "Heavy fleece hoodie with embroidered chest logo.",
     tag: "New",
   },
   {
     id: "cap-trigger",
-    name: "Trigger 5-Panel Cap",
+    name: "Trigger Cap",
     category: "clothing",
-    price: 28.00,
-    image: "https://picsum.photos/seed/trigger/600/600",
-    description: "Classic 5-panel with a woven UnoSignal patch.",
+    price: 28.0,
+    image: "images/hat.jpg",
+    description: "Flat peak snapback with a woven UnoSignal patch.",
     tag: null,
   },
   {
     id: "wheels-journey",
     name: "Journey Wheels (Set of 4)",
     category: "accessories",
-    price: 36.00,
+    price: 36.0,
     image: "https://picsum.photos/seed/journey/600/600",
     description: "53mm / 99a all-terrain wheels.",
     tag: null,
@@ -81,5 +81,7 @@ window.PRODUCTS = [
 ];
 
 window.findProduct = function (id) {
-  return window.PRODUCTS.find(function (p) { return p.id === id; });
+  return window.PRODUCTS.find(function (p) {
+    return p.id === id;
+  });
 };
